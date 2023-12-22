@@ -1,0 +1,105 @@
+@using ShopifyAppTemplate.Config;
+
+@inject AppState AppStateObj
+
+<div class="row">
+    <!-- Sidebar for navigation -->
+
+    <div class="col-lg-2 bg-light">
+        <div class="px-4 py-4 mb-1 text-center">
+            <img class="d-block mx-auto my-2"
+                src="https://sjetspublic.blob.core.windows.net/website/shopjets-text-logo-750-200.png"
+                alt="Shopjets logo" width="200">
+        </div>
+        <div class="d-lg-block collapse pb-2" id="account-menu">
+            <hr>
+            @if (AppStateObj.CurrentCustomer.IsSubscribed())
+            {
+                <a class="d-flex align-items-center nav-link-style px-4 py-3" href=""
+                @onclick="@(() => currentNavItem = NavItems.Wizard)" @onclick:preventDefault>
+                    <i class="ai-layers fs-lg opacity-60 me-2"></i>
+                    Batch wizard
+                </a>
+                <a class="d-flex align-items-center nav-link-style px-4 py-3" href=""
+                @onclick="@(() => currentNavItem = NavItems.Editor)" @onclick:preventDefault>
+                    <i class="ai-image fs-lg opacity-60 me-2"></i>
+                    Image editor
+                </a>
+                <a class="d-flex align-items-center nav-link-style px-4 py-3" href=""
+                @onclick="@(() => currentNavItem = NavItems.Tasks)" @onclick:preventDefault>
+                    <i class="ai-list fs-lg opacity-60 me-2"></i>
+                    Tasks
+                </a>
+                <a class="d-flex align-items-center nav-link-style px-4 py-3" href=""
+                @onclick="@(() => currentNavItem = NavItems.Profile)" @onclick:preventDefault>
+                    <i class="ai-user fs-lg opacity-60 me-2"></i>
+                    Profile
+                </a>
+            }
+
+            <a class="d-flex align-items-center nav-link-style px-4 py-3" href=""
+                @onclick="@(() => currentNavItem = NavItems.Subscription)" @onclick:preventDefault>
+                <i class="ai-dollar-sign fs-lg opacity-60 me-2"></i>
+                Subscription
+            </a>
+
+            <a class="d-flex align-items-center nav-link-style px-4 py-3" target="_blank" rel="noopener"
+                href="https://shop-jets.com/image-optimizer/help">
+                <i class="ai-book fs-lg opacity-60 me-2"></i>
+                Help
+            </a>
+        </div>
+    </div>
+    <!-- Content -->
+    <div class="col-lg-10">
+        @if (AppStateObj.CurrentCustomer.IsSubscribed())
+        {
+            @switch (currentNavItem)
+            {
+                case NavItems.Editor:
+                    <ImageEditor />
+                    break;
+
+                case NavItems.Wizard:
+                    <BatchWizard TaskSubmittedEvent=OnTaskSubmittedIndexEvent />
+                    break;
+
+                case NavItems.Tasks:
+                    <TaskSummary />
+                    break;
+
+                case NavItems.Subscription:
+                    <Subscription />
+                    break;
+
+                default:
+                    <Profile />
+                    break;
+            }
+        }
+        else
+        {
+            <Subscription />
+        }
+
+    </div>
+</div>
+
+@code
+{
+    [Parameter]
+    public ShopifyAppTemplate.Models.Customer? CurrentCustomer { get; set; }
+    private enum NavItems { Unset, Profile, Editor, Wizard, Tasks, Subscription, Help}
+    private NavItems currentNavItem = NavItems.Unset;
+    protected override void OnInitialized()
+    {
+        AppStateObj.CurrentCustomer = CurrentCustomer;
+    }
+
+    private async Task OnTaskSubmittedIndexEvent()
+    {
+        //Handle the event from Summary > Wizard > Index
+        currentNavItem = NavItems.Tasks;
+        StateHasChanged();
+    }
+}

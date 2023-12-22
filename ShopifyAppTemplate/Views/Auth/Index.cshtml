@@ -1,0 +1,32 @@
+@model LoginViewModel
+
+@{
+    Layout = "_MVCLayout";
+    ViewData["Title"] = "Index";    
+}
+
+<div class="text-center">
+    <div class="px-4 py-4 mt-8 mb-2 text-center">
+        <img class="d-block mx-auto my-2"
+            src="https://sjetspublic.blob.core.windows.net/website/shopjets-text-logo-750-200.png" alt="Shopjets logo"
+            width="350">
+    </div>
+</div>
+
+<div class="container py-5 py-sm-6 py-md-7">
+    <div class="row justify-content-center pt-4">
+        <div class="col-lg-7 col-md-4 col-sm-11">
+            <div class="bg-secondary rounded-3 px-3 py-4 p-sm-4">
+                <h1 class="h2 pb-2">Login with Shopify</h1>
+                <p class="fs-sm">Use your *.myshopify.com domain to login to Shopjets</p>            
+                <form method="get" enctype="application/x-www-form-urlencoded" asp-controller="Auth" asp-action="Login">
+                    <div class="form-group mb-2 pb-1">
+                        <input id="shop" name="shop" class="form-control" type="text" value="@Model.ShopDomain" required/>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Sign in</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

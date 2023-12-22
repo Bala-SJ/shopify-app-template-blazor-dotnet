@@ -1,0 +1,123 @@
+@using System.Text.Json;
+@using System.Text.Json.Nodes;
+@using ShopifySharp;
+@using ShopifyAppTemplate.Config;
+@using ShopifyAppTemplate.Services;
+
+@implements IDisposable
+
+@inject AppState AppStateObj
+@inject ShopjetsAdminService ShopjetsAdmin
+@inject Radzen.DialogService RDialogService
+@inject Radzen.NotificationService RNotifyService
+
+<RadzenDialog />
+<RadzenNotification />
+
+<div class="card mt-4 bg-light">
+  <h2 class="mt-2 text-center">Image editor</h2>
+  <div class="card-header">
+
+    @if ((AppStateObj.EditorProductImage != null) && (AppStateObj.CurrentCustomer != null))
+    {
+      <ul class="nav nav-pills card-header-pills">
+        <li class="nav-item">
+          <button class="nav-link bg-warning" @onclick=@SelectImage>
+            <i class="ai-grid me-2"></i>Select image
+          </button>
+        </li>
+      </ul>
+    }
+
+  </div>
+  <div class="card-body bg-secondary mr-3 ml-3">
+    @if (AppStateObj.EditorProductImage == null)
+    {
+      <ProductFilter SelectMode=true OnImageSelect="@HandleOnImageSelected" />
+    }
+    else
+    {
+      <div class="row">
+        <div class="col-xl-6">
+          <div class="d-flex justify-center">
+            @if (ImageEditorUrl == string.Empty || ImageEditorUrl == null)
+            {
+              <div class="alert alert-danger" role="alert">
+                Error processing the image. Please retry with another image.
+              </div>
+            }
+            else
+            {
+              <img src=@ImageEditorUrl class="object-contain object-center rounded-lg">
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+<!-- End of component -->
+
+@code {
+  private string ImageEditorUrl = string.Empty;
+  private JsonNode ImgProcResponseJson = null;
+
+  protected override async Task OnInitializedAsync()
+  {
+    if (AppStateObj.CurrentCustomer  != null)
+    {
+      Console.WriteLine(" ====> Blazor ImageEditor : OnInitializedAsync " + AppStateObj.CurrentCustomer.Id);
+    }
+  }
+
+  private void ClearAfterPublish()
+  {
+    AppStateObj.ClearEditorState();
+
+    ImageEditorUrl = string.Empty;    
+    ImgProcResponseJson = null;
+  }
+
+  private void HandleOnImageSelected(ProductImage prodImg)
+  {
+    if (prodImg != null)
+    {
+      ImageEditorUrl = prodImg.Src;
+    }
+    StateHasChanged();
+  }
+
+  private void SelectImage()
+  {
+    ClearAfterPublish();
+    StateHasChanged();
+  }
+
+  void ShowBusyDialog(string dialogText)
+  {
+    var rDialogOptions = new Radzen.DialogOptions();
+    rDialogOptions.ShowTitle = false;
+    rDialogOptions.Style = "min-height:auto;min-width:auto;width:auto";
+
+    InvokeAsync(async () =>
+    {
+      await RDialogService.OpenAsync("", ds =>
+      @<div class="mb-2">
+        <div class="h-100 rounded-3 text-center">
+          <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">@dialogText</span>
+          </div>
+          <h3 class="fs-md text-body mt-4">@dialogText</h3>
+        </div>
+      </div>
+  , rDialogOptions).ConfigureAwait(false);
+    });
+  }
+
+  public void Dispose()
+  {
+    //When the user navigates away from the editor, we need to reset the state
+    Console.WriteLine("------------> ImageEditor : Dispose");
+    ClearAfterPublish();
+  }
+}

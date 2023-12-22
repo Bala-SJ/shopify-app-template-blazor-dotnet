@@ -1,0 +1,8 @@
+﻿@model LoginViewModel
+
+@{
+    Layout = "_BlazorLayout";
+}
+
+<component type="typeof(ShopifyAppTemplate.Components.Index)" render-mode="Server" param-CurrentCustomer=@ViewBag.CurrentCustomer />
+

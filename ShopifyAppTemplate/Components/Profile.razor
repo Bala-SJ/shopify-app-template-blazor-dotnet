@@ -1,0 +1,129 @@
+@using ShopifySharp;
+@using ShopifyAppTemplate.Config;
+@using ShopifyAppTemplate.ViewModels;
+@inject ShopjetsAdminService ShopjetsAdmin
+@inject AppState AppStateObj
+
+@if (shop == null || usageMetrics == null)
+{
+    <div class="progress mt-4">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"
+            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+        </div>
+    </div>
+}
+else
+{
+    <div class="container mt-4 position-relative zindex-5 pb-4 mb-md-3">
+        <!-- Content-->
+        <div class="col-lg-10 bg-light rounded-3 shadow-lg">
+            
+            <div class="d-flex flex-column h-100 p-4">
+                <div class="py-2 p-md-3">
+                    <!-- Title + Delete link-->
+                    <div class="d-sm-flex align-items-center justify-content-between text-center text-sm-start">
+                        <h1 class="h3 mb-2 text-nowrap">Shopify details</h1>
+                    </div>
+                    <!-- Content-->
+                    <div class="bg-secondary rounded-3 p-4">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-2 pb-1">
+                                    <label class="form-label px-0" for="account-fn">Name</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-2 pb-1">
+                                    <label class="form-label px-0" for="account-ln">@shop.Name</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-2 pb-1">
+                                    <label class="form-label px-0" for="account-email">Domain</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-2 pb-1">
+                                    <label class="form-label px-0"
+                                        for="account-username">@AppStateObj.CurrentCustomer.ShopifyShopDomain</label>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-2 pb-1">
+                                    <label class="form-label px-0" for="account-country">Country</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3 pb-1">
+                                    <label class="form-label px-0" for="account-city">@shop.CountryName</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="mt-1 mb-1">
+            
+            <div class="d-flex flex-column h-100 p-4">
+                <div class="p-md-3">
+                    <!-- Title-->
+                    <h1 class="h3 text-center text-sm-start">Usage details</h1>
+                    <!-- Stats-->
+                    <div class="row mx-n2 py-2">
+                        <div class="col-md-4 col-sm-6 px-2 mb-3">
+                            <div class="bg-secondary h-100 rounded-3 p-4 text-center">
+                                <h3 class="fs-md fw-bold text-body">Total images</h3>
+                                <p class="h2 mb-2">@usageMetrics.TotalImages</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 px-2 mb-3">
+                            <div class="bg-secondary h-100 rounded-3 p-4 text-center">
+                                <h3 class="fs-md fw-bold text-body">Standard filters</h3>
+                                <p class="h2 mb-2">@usageMetrics.StandardFilters</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12 px-2 mb-3">
+                            <div class="bg-secondary h-100 rounded-3 p-4 text-center">
+                                <h3 class="fs-md fw-bold text-body">AI filters</h3>
+                                <p class="h2 mb-2">@usageMetrics.AIFilters</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-n2 pt-2">
+                        <div class="col-lg-6 px-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="fs-md pb-3 mb-0 border-bottom">Your top filters</h3>
+                                    @foreach (var item in @usageMetrics.TopFilters)
+                                        {
+                                            <div class="d-flex justify-content-between align-items-center fs-sm py-2 border-bottom">
+                                                <div class="d-flex align-items-start py-1">
+                                                    <div class="ps-1">@item.Key</div>
+                                                </div><span>@item.Value</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        
+
+}
+
+@code {
+    private Shop? shop { get; set; }
+    private UsageMetrics? usageMetrics { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var shopService = new ShopService(AppStateObj.CurrentCustomer.ShopifyShopDomain,
+        AppStateObj.CurrentCustomer.ShopifyAccessToken);
+        shop = await shopService.GetAsync();
+    }
+}

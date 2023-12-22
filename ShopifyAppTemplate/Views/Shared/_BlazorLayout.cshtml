@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>ShopJets | Image Optimizer</title>
+
+    <base href="~/" />
+    <link href="_content/Radzen.Blazor/css/default-base.css" rel="stylesheet">    
+    <link href="css/lightgallery/lightgallery.min.css" rel="stylesheet">    
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/theme.min.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" />    
+</head>
+
+<body>
+    <main role="main">
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+    </main>
+</body>
+
+<script src="_content/Radzen.Blazor/Radzen.Blazor.js" async></script>
+<script src="js/lightgallery/lightgallery.min.js" async></script>
+<script src="_framework/blazor.server.js" async></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+
+</html>

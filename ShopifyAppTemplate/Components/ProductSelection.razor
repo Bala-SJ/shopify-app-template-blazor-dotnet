@@ -1,0 +1,25 @@
+<!-- Gallery grid with gutters -->
+<div class="row flex-container">
+
+    @for (int i = 0; i < 10; i++)
+    {
+        var styleDiv = "col-lg-2 mr-2 mb-2 ";
+        var imgSrc = "https://sjetspublic.blob.core.windows.net/website/index_hero_4.png";
+        if( i % 2 == 0 )
+        {
+            styleDiv += "bg-warning";
+        }
+        else
+        {
+            styleDiv += "bg-info";
+        }
+        if( i % 3 == 0 )
+        {
+            imgSrc = "https://sjetspublic.blob.core.windows.net/website/shopjets-benefits.png";
+        }
+        <div class=@styleDiv style="display:table-cell; vertical-align:middle; text-align:center">
+            <img src=@imgSrc alt="Gallery thumbnail">
+        </div>
+    }
+    
+</div>
